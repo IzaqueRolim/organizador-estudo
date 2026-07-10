@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ConteudoTree } from "../../components/ConteudoTree";
 import { DisciplinaCard } from "../../components/DisciplinaCard";
+import { ImportarDisciplinasModal } from "../../components/ImportarDisciplinasModal";
 import { NovaDisciplinaModal } from "../../components/NovaDisciplinaModal";
 import { NovoConteudoModal } from "../../components/NovoConteudoModal";
 import { useConcurso } from "../../hooks/useConcurso";
@@ -14,6 +15,7 @@ interface ConteudoTarget {
 export function Edital() {
   const { concurso } = useConcurso();
   const [disciplinaModalAberto, setDisciplinaModalAberto] = useState(false);
+  const [importarModalAberto, setImportarModalAberto] = useState(false);
   const [conteudoTarget, setConteudoTarget] = useState<ConteudoTarget | null>(
     null,
   );
@@ -34,13 +36,22 @@ export function Edital() {
           <h1>Disciplinas e conteudos</h1>
           <p>Quebre o edital em topicos estudaveis e acompanhe o andamento.</p>
         </div>
-        <button
-          type="button"
-          className="primaryButton"
-          onClick={() => setDisciplinaModalAberto(true)}
-        >
-          Nova disciplina
-        </button>
+        <div style={{ display: "flex", gap: "12px" }}>
+          <button
+            type="button"
+            className="primaryButton"
+            onClick={() => setImportarModalAberto(true)}
+          >
+            Importar disciplina
+          </button>
+          <button
+            type="button"
+            className="ghostButton"
+            onClick={() => setDisciplinaModalAberto(true)}
+          >
+            Nova disciplina
+          </button>
+        </div>
       </section>
 
       {concurso.disciplinas.length === 0 ? (
@@ -76,6 +87,11 @@ export function Edital() {
       <NovaDisciplinaModal
         open={disciplinaModalAberto}
         onClose={() => setDisciplinaModalAberto(false)}
+      />
+
+      <ImportarDisciplinasModal
+        open={importarModalAberto}
+        onClose={() => setImportarModalAberto(false)}
       />
 
       {conteudoTarget && (

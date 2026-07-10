@@ -118,7 +118,7 @@ export interface ConcursoContextValue {
   selecionarConcurso: (concursoId: string) => void;
   removeConcurso: (concursoId: string) => void;
   updateConcurso: (dados: Partial<ConcursoDraft>) => void;
-  addDisciplina: (dados: NovaDisciplina) => void;
+  addDisciplina: (dados: NovaDisciplina) => Disciplina | null;
   updateDisciplina: (
     disciplinaId: string,
     dados: Partial<Omit<Disciplina, "id" | "conteudos" | "criadoEm">>,

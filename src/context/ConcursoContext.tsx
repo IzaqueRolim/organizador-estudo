@@ -217,7 +217,7 @@ export function ConcursoProvider({ children }: ConcursoProviderProps) {
 
   const addDisciplina = useCallback((dados: NovaDisciplina) => {
     if (!dados.nome.trim()) {
-      return;
+      return null;
     }
 
     const data = nowIso();
@@ -238,6 +238,8 @@ export function ConcursoProvider({ children }: ConcursoProviderProps) {
         atualizadoEm: data,
       })),
     );
+
+    return disciplina;
   }, []);
 
   const updateDisciplina = useCallback(

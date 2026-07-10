@@ -61,7 +61,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                     {concurso.banca || "Banca nao informada"}
                   </p>
                 </div>
-                <strong>{dias === null ? "--" : dias}</strong>
+                <strong>{dias === null ? "--" : dias} Dias</strong>
               </div>
 
               <div className="progressBar" aria-label={`Progresso ${progresso}%`}>
@@ -91,10 +91,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                   className="primaryButton"
                   onClick={() => {
                     selecionarConcurso(concurso.id);
-                    onNavigate("cadastro");
+                    onNavigate("informacoes");
                   }}
                 >
-                  Usar este
+                  Acessar Concurso
                 </button>
                 <button
                   type="button"

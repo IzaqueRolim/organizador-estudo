@@ -1,9 +1,11 @@
 export type AppPage =
   | "dashboard"
+  | "informacoes"
   | "cadastro"
   | "edital"
   | "pesos"
   | "cronograma"
+  | "visualizar-cronograma"
   | "habitos"
   | "estudos";
 
@@ -14,9 +16,9 @@ interface HeaderProps {
 
 const pages: Array<{ key: AppPage; label: string }> = [
   { key: "dashboard", label: "Concursos" },
-  { key: "cadastro", label: "Cadastro" },
-  { key: "edital", label: "Edital" },
-  { key: "pesos", label: "Pesos" },
+  // { key: "cadastro", label: "Cadastro" },
+  // { key: "edital", label: "Edital" },
+  // { key: "pesos", label: "Pesos" },
   { key: "cronograma", label: "Cronograma" },
   { key: "habitos", label: "Habitos" },
   { key: "estudos", label: "Estudos" },

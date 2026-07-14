@@ -7,6 +7,8 @@ interface DisciplinaCardProps {
   disciplina: Disciplina;
   children?: ReactNode;
   onAddConteudo?: (disciplinaId: string) => void;
+  expanded?: boolean;
+  onToggleExpanded?: (disciplinaId: string) => void;
 }
 
 const contarConteudos = (disciplinas: Disciplina["conteudos"]): number =>
@@ -28,6 +30,8 @@ export function DisciplinaCard({
   disciplina,
   children,
   onAddConteudo,
+  expanded = true,
+  onToggleExpanded,
 }: DisciplinaCardProps) {
   const { updateDisciplina, removeDisciplina } = useConcurso();
   const [editando, setEditando] = useState(false);
@@ -77,6 +81,16 @@ export function DisciplinaCard({
         </div>
 
         <div className="buttonGroup">
+          {onToggleExpanded && (
+            <button
+              type="button"
+              className="ghostButton"
+              onClick={() => onToggleExpanded(disciplina.id)}
+              title={expanded ? "Minimizar conteúdos" : "Expandir conteúdos"}
+            >
+              {expanded ? "▼" : "▶"}
+            </button>
+          )}
           {onAddConteudo && (
             <button
               type="button"
@@ -107,7 +121,7 @@ export function DisciplinaCard({
         <span style={{ width: `${progresso}%` }} />
       </div>
 
-      {children}
+      {expanded && children}
     </section>
   );
 }

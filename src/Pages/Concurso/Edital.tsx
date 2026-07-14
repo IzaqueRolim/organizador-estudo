@@ -19,6 +19,21 @@ export function Edital() {
   const [conteudoTarget, setConteudoTarget] = useState<ConteudoTarget | null>(
     null,
   );
+  const [disciplinasExpandidas, setDisciplinasExpandidas] = useState<Set<string>>(
+    new Set(concurso.disciplinas.map((d) => d.id)),
+  );
+
+  const toggleExpandirDisciplina = (disciplinaId: string) => {
+    setDisciplinasExpandidas((prev) => {
+      const novo = new Set(prev);
+      if (novo.has(disciplinaId)) {
+        novo.delete(disciplinaId);
+      } else {
+        novo.add(disciplinaId);
+      }
+      return novo;
+    });
+  };
 
   const abrirModalConteudo = (
     disciplinaId: string,
@@ -54,6 +69,29 @@ export function Edital() {
         </div>
       </section>
 
+      {concurso.disciplinas.length > 0 && (
+        <section style={{ marginBottom: "16px", display: "flex", gap: "8px" }}>
+          <button
+            type="button"
+            className="ghostButton"
+            onClick={() =>
+              setDisciplinasExpandidas(
+                new Set(concurso.disciplinas.map((d) => d.id)),
+              )
+            }
+          >
+            Expandir tudo
+          </button>
+          <button
+            type="button"
+            className="ghostButton"
+            onClick={() => setDisciplinasExpandidas(new Set())}
+          >
+            Minimizar tudo
+          </button>
+        </section>
+      )}
+
       {concurso.disciplinas.length === 0 ? (
         <section className="emptyState">
           <h2>Nenhuma disciplina cadastrada</h2>
@@ -73,6 +111,8 @@ export function Edital() {
               key={disciplina.id}
               disciplina={disciplina}
               onAddConteudo={abrirModalConteudo}
+              expanded={disciplinasExpandidas.has(disciplina.id)}
+              onToggleExpanded={toggleExpandirDisciplina}
             >
               <ConteudoTree
                 disciplinaId={disciplina.id}

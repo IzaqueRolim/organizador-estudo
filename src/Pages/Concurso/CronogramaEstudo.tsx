@@ -1,25 +1,18 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { useConcurso } from "../../hooks/useConcurso";
-import type { DiaSemana, NovoCronogramaItem } from "../../types/concurso";
+import type { NovoCronogramaItem } from "../../types/concurso";
 import {
+  dataLocalIso,
   encontrarConteudo,
   encontrarDisciplina,
+  formatarData,
   formatarMinutos,
   listarConteudos,
+  ordenarCronogramaPorDataHora,
 } from "../../utils/concursoStats";
 
-const diasSemana: Array<{ key: DiaSemana; label: string }> = [
-  { key: "segunda", label: "Segunda" },
-  { key: "terca", label: "Terca" },
-  { key: "quarta", label: "Quarta" },
-  { key: "quinta", label: "Quinta" },
-  { key: "sexta", label: "Sexta" },
-  { key: "sabado", label: "Sabado" },
-  { key: "domingo", label: "Domingo" },
-];
-
 const estadoInicial: NovoCronogramaItem = {
-  dia: "segunda",
+  data: dataLocalIso(),
   horario: "19:00",
   duracaoMinutos: 60,
   disciplinaId: "",
@@ -36,6 +29,24 @@ export function CronogramaEstudo() {
     removeCronogramaItem,
   } = useConcurso();
   const [form, setForm] = useState<NovoCronogramaItem>(estadoInicial);
+
+  const cronogramaPorData = useMemo(() => {
+    const agrupado = new Map<string, typeof cronograma>();
+
+    cronograma.forEach((item) => {
+      const data = item.data || dataLocalIso();
+      const itens = agrupado.get(data) ?? [];
+      itens.push(item);
+      agrupado.set(data, itens);
+    });
+
+    return Array.from(agrupado.entries())
+      .sort(([dataA], [dataB]) => dataA.localeCompare(dataB))
+      .map(([data, itens]) => ({
+        data,
+        itens: ordenarCronogramaPorDataHora(itens),
+      }));
+  }, [cronograma]);
 
   const conteudosDaDisciplina = useMemo(() => {
     const disciplina = concurso.disciplinas.find(
@@ -55,10 +66,11 @@ export function CronogramaEstudo() {
     addCronogramaItem({
       ...form,
       titulo,
+      data: form.data || dataLocalIso(),
       conteudoId: form.conteudoId || undefined,
       disciplinaId: form.disciplinaId || undefined,
     });
-    setForm(estadoInicial);
+    setForm({ ...estadoInicial, data: form.data || dataLocalIso() });
   };
 
   return (
@@ -66,7 +78,7 @@ export function CronogramaEstudo() {
       <section className="pageTitle">
         <div>
           <span>Cronograma</span>
-          <h1>Semana de estudo</h1>
+          <h1>Cronograma de estudos</h1>
           <p>{concurso.titulo}</p>
         </div>
       </section>
@@ -74,22 +86,14 @@ export function CronogramaEstudo() {
       <section className="studyPlanner">
         <form className="scheduleForm" onSubmit={handleSubmit}>
           <label>
-            Dia
-            <select
-              value={form.dia}
+            Data
+            <input
+              type="date"
+              value={form.data}
               onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  dia: event.target.value as DiaSemana,
-                }))
+                setForm((current) => ({ ...current, data: event.target.value }))
               }
-            >
-              {diasSemana.map((dia) => (
-                <option key={dia.key} value={dia.key}>
-                  {dia.label}
-                </option>
-              ))}
-            </select>
+            />
           </label>
 
           <label>
@@ -175,76 +179,70 @@ export function CronogramaEstudo() {
         </form>
 
         <section className="weekGrid">
-          {diasSemana.map((dia) => {
-            const itens = cronograma
-              .filter((item) => item.dia === dia.key)
-              .sort((a, b) => a.horario.localeCompare(b.horario));
+          {cronogramaPorData.map(({ data, itens }) => (
+            <article key={data} className="dayColumn">
+              <div className="dayHeader">
+                <strong>{formatarData(data)}</strong>
+                <span>{itens.length}</span>
+              </div>
 
-            return (
-              <article key={dia.key} className="dayColumn">
-                <div className="dayHeader">
-                  <strong>{dia.label}</strong>
-                  <span>{itens.length}</span>
-                </div>
+              {itens.length === 0 ? (
+                <div className="emptyState compact">Livre</div>
+              ) : (
+                <div className="scheduleList">
+                  {itens.map((item) => {
+                    const disciplina = encontrarDisciplina(
+                      concurso.disciplinas,
+                      item.disciplinaId,
+                    );
+                    const conteudo = encontrarConteudo(
+                      concurso.disciplinas,
+                      item.conteudoId,
+                    );
 
-                {itens.length === 0 ? (
-                  <div className="emptyState compact">Livre</div>
-                ) : (
-                  <div className="scheduleList">
-                    {itens.map((item) => {
-                      const disciplina = encontrarDisciplina(
-                        concurso.disciplinas,
-                        item.disciplinaId,
-                      );
-                      const conteudo = encontrarConteudo(
-                        concurso.disciplinas,
-                        item.conteudoId,
-                      );
-
-                      return (
-                        <div
-                          key={item.id}
-                          className={item.concluido ? "scheduleItem done" : "scheduleItem"}
-                        >
-                          <div>
-                            <span>
-                              {item.horario} / {formatarMinutos(item.duracaoMinutos)}
-                            </span>
-                            <strong>{item.titulo}</strong>
-                            <small>
-                              {disciplina?.nome || "Sem disciplina"}
-                              {conteudo ? ` / ${conteudo.titulo}` : ""}
-                            </small>
-                          </div>
-
-                          <div className="buttonGroup">
-                            <button
-                              type="button"
-                              className="iconButton"
-                              onClick={() =>
-                                updateCronogramaItem(item.id, {
-                                  concluido: !item.concluido,
-                                })
-                              }
-                            >
-                              {item.concluido ? "Reabrir" : "Feito"}
-                            </button>
-                            <button
-                              type="button"
-                              className="iconButton danger"
-                              onClick={() => removeCronogramaItem(item.id)}
-                            >
-                              Excluir
-                            </button>
-                          </div>
+                    return (
+                      <div
+                        key={item.id}
+                        className={item.concluido ? "scheduleItem done" : "scheduleItem"}
+                      >
+                        <div>
+                          <span>
+                            {item.horario} / {formatarMinutos(item.duracaoMinutos)}
+                          </span>
+                          <strong>{item.titulo}</strong>
+                          <small>
+                            {disciplina?.nome || "Sem disciplina"}
+                            {conteudo ? ` / ${conteudo.titulo}` : ""}
+                          </small>
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </article>
-            );
-          })}
+
+                        <div className="buttonGroup">
+                          <button
+                            type="button"
+                            className="iconButton"
+                            onClick={() =>
+                              updateCronogramaItem(item.id, {
+                                concluido: !item.concluido,
+                              })
+                            }
+                          >
+                            {item.concluido ? "Reabrir" : "Feito"}
+                          </button>
+                          <button
+                            type="button"
+                            className="iconButton danger"
+                            onClick={() => removeCronogramaItem(item.id)}
+                          >
+                            Excluir
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </article>
+          ))}
         </section>
       </section>
     </main>

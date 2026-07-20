@@ -111,3 +111,20 @@ export const formatarMinutos = (minutos: number) => {
 
   return `${horas}h ${resto}min`;
 };
+
+export const ordenarCronogramaPorDataHora = <T extends { data?: string; horario?: string }>(
+  itens: T[],
+) =>
+  [...itens].sort((a, b) => {
+    const dataA = a.data || "";
+    const dataB = b.data || "";
+    const horarioA = a.horario || "";
+    const horarioB = b.horario || "";
+    const comparacaoData = dataA.localeCompare(dataB);
+
+    if (comparacaoData !== 0) {
+      return comparacaoData;
+    }
+
+    return horarioA.localeCompare(horarioB);
+  });

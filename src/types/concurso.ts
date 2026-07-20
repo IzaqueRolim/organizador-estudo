@@ -60,7 +60,8 @@ export type DiaSemana =
 export interface CronogramaItem {
   id: string;
   concursoId: string;
-  dia: DiaSemana;
+  data: string;
+  dia?: DiaSemana;
   horario: string;
   duracaoMinutos: number;
   disciplinaId?: string;

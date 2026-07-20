@@ -1,4 +1,5 @@
-import type { AppConcursoState, Concurso, ConcursoDraft } from "../types/concurso";
+import type { AppConcursoState, Concurso, ConcursoDraft, CronogramaItem } from "../types/concurso";
+import { dataLocalIso } from "../utils/concursoStats";
 
 const STORAGE_KEY = "gestao-concursos:estado";
 const LEGACY_STORAGE_KEY = "gestao-concursos:concurso";
@@ -319,6 +320,40 @@ const isEstado = (valor: unknown): valor is AppConcursoState => {
   );
 };
 
+const normalizarCronograma = (cronograma: unknown[]): CronogramaItem[] =>
+  cronograma.map((item) => {
+    if (!item || typeof item !== "object") {
+      return {
+        id: createId("cronograma"),
+        concursoId: "",
+        data: dataLocalIso(),
+        horario: "19:00",
+        duracaoMinutos: 60,
+        titulo: "Estudo",
+        concluido: false,
+        criadoEm: nowIso(),
+        atualizadoEm: nowIso(),
+      } as CronogramaItem;
+    }
+
+    const entrada = item as Partial<CronogramaItem>;
+
+    return {
+      id: entrada.id || createId("cronograma"),
+      concursoId: entrada.concursoId || "",
+      data: entrada.data || dataLocalIso(),
+      dia: entrada.dia,
+      horario: entrada.horario || "19:00",
+      duracaoMinutos: Math.max(5, entrada.duracaoMinutos || 60),
+      disciplinaId: entrada.disciplinaId,
+      conteudoId: entrada.conteudoId,
+      titulo: entrada.titulo || "Estudo",
+      concluido: Boolean(entrada.concluido),
+      criadoEm: entrada.criadoEm || nowIso(),
+      atualizadoEm: entrada.atualizadoEm || nowIso(),
+    } as CronogramaItem;
+  });
+
 export const concursoService = {
   carregar(): AppConcursoState {
     if (!storageDisponivel()) {
@@ -332,6 +367,7 @@ export const concursoService = {
         if (isEstado(parsed) && parsed.concursos.length > 0) {
           return {
             ...parsed,
+            cronograma: normalizarCronograma(parsed.cronograma),
             concursoIdAtivo:
               parsed.concursos.some(
                 (concurso) => concurso.id === parsed.concursoIdAtivo,

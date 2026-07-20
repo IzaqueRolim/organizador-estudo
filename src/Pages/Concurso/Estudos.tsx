@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useConcurso } from "../../hooks/useConcurso";
 import {
   dataLocalIso,
+  formatarData,
   formatarMinutos,
   listarConteudos,
+  ordenarCronogramaPorDataHora,
 } from "../../utils/concursoStats";
 
 const formatarCronometro = (segundos: number) => {
@@ -17,7 +19,7 @@ const formatarCronometro = (segundos: number) => {
 };
 
 export function Estudos() {
-  const { concurso, registrosEstudo, registrarEstudo } = useConcurso();
+  const { concurso, cronograma, registrosEstudo, registrarEstudo } = useConcurso();
   const [rodando, setRodando] = useState(false);
   const [segundos, setSegundos] = useState(0);
   const [disciplinaId, setDisciplinaId] = useState("");
@@ -31,6 +33,23 @@ export function Estudos() {
 
     return disciplina ? listarConteudos(disciplina.conteudos) : [];
   }, [concurso.disciplinas, disciplinaId]);
+
+  const proximoEstudo = useMemo(() => {
+    const agora = new Date();
+    const agoraMillis = agora.getTime();
+
+    const futuros = ordenarCronogramaPorDataHora(cronograma).filter((item) => {
+      const data = item.data || dataLocalIso();
+      const [ano, mes, dia] = data.split("-").map(Number);
+      const horario = item.horario || "19:00";
+      const [hora, minuto] = horario.split(":").map(Number);
+      const dataHora = new Date(ano, mes - 1, dia, hora, minuto);
+
+      return dataHora.getTime() >= agoraMillis;
+    });
+
+    return futuros[0];
+  }, [cronograma]);
 
   useEffect(() => {
     if (!rodando) {
@@ -152,6 +171,25 @@ export function Estudos() {
             />
           </label>
         </form>
+      </section>
+
+      <section className="dashboardSection">
+        <div className="sectionHeader">
+          <h2>Próximo estudo</h2>
+          {proximoEstudo ? <span>{formatarData(proximoEstudo.data)}</span> : null}
+        </div>
+
+        {proximoEstudo ? (
+          <div className="historyItem">
+            <strong>{proximoEstudo.titulo}</strong>
+            <p>
+              {proximoEstudo.horario} · {formatarMinutos(proximoEstudo.duracaoMinutos)}
+            </p>
+            <span>{proximoEstudo.disciplinaId ? "Disciplina atribuída" : "Sem disciplina"}</span>
+          </div>
+        ) : (
+          <div className="emptyState compact">Nenhum estudo agendado para os próximos dias.</div>
+        )}
       </section>
 
       <section className="dashboardSection">

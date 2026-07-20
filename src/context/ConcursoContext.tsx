@@ -13,6 +13,7 @@ import {
   createId,
   nowIso,
 } from "../services/concurso.service";
+import { dataLocalIso } from "../utils/concursoStats";
 import type {
   AppConcursoState,
   Concurso,
@@ -126,15 +127,6 @@ const atualizarConcursoAtivo = (
     ),
     concursoIdAtivo: ativo.id,
   };
-};
-
-const dataLocalIso = () => {
-  const hoje = new Date();
-  const ano = hoje.getFullYear();
-  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-  const dia = String(hoje.getDate()).padStart(2, "0");
-
-  return `${ano}-${mes}-${dia}`;
 };
 
 export function ConcursoProvider({ children }: ConcursoProviderProps) {
@@ -416,7 +408,7 @@ export function ConcursoProvider({ children }: ConcursoProviderProps) {
       const item: CronogramaItem = {
         id: createId("cronograma"),
         concursoId: concurso.id,
-        dia: dados.dia,
+        data: dados.data || dataLocalIso(),
         horario: dados.horario,
         duracaoMinutos: Math.max(5, dados.duracaoMinutos),
         disciplinaId: dados.disciplinaId || undefined,

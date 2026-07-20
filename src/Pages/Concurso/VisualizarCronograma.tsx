@@ -1,21 +1,13 @@
 import styled from "styled-components";
+import { useMemo } from "react";
 import { useConcurso } from "../../hooks/useConcurso";
-import type { DiaSemana } from "../../types/concurso";
 import {
   encontrarConteudo,
   encontrarDisciplina,
+  formatarData,
   formatarMinutos,
+  ordenarCronogramaPorDataHora,
 } from "../../utils/concursoStats";
-
-const diasSemana: Array<{ key: DiaSemana; label: string }> = [
-  { key: "segunda", label: "Segunda" },
-  { key: "terca", label: "Terça" },
-  { key: "quarta", label: "Quarta" },
-  { key: "quinta", label: "Quinta" },
-  { key: "sexta", label: "Sexta" },
-  { key: "sabado", label: "Sábado" },
-  { key: "domingo", label: "Domingo" },
-];
 
 const PageContainer = styled.main`
   min-height: 100vh;
@@ -193,7 +185,7 @@ const SummarySection = styled.section`
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 16px;
-  }
+  } 
 
   dl {
     display: grid;
@@ -224,6 +216,24 @@ const SummarySection = styled.section`
 export function VisualizarCronograma() {
   const { concurso, cronograma, updateCronogramaItem, removeCronogramaItem } =
     useConcurso();
+
+  const cronogramaPorData = useMemo(() => {
+    const agrupado = new Map<string, typeof cronograma>();
+
+    cronograma.forEach((item) => {
+      const data = item.data || "";
+      const itens = agrupado.get(data) ?? [];
+      itens.push(item);
+      agrupado.set(data, itens);
+    });
+
+    return Array.from(agrupado.entries())
+      .sort(([dataA], [dataB]) => dataA.localeCompare(dataB))
+      .map(([data, itens]) => ({
+        data,
+        itens: ordenarCronogramaPorDataHora(itens),
+      }));
+  }, [cronograma]);
 
   const totalHoras = cronograma.reduce((total, item) => total + item.duracaoMinutos, 0);
   const totalConcluidos = cronograma.filter((item) => item.concluido).length;
@@ -269,72 +279,66 @@ export function VisualizarCronograma() {
         )}
 
         <WeekGridContainer>
-          {diasSemana.map((dia) => {
-            const itens = cronograma
-              .filter((item) => item.dia === dia.key)
-              .sort((a, b) => a.horario.localeCompare(b.horario));
+          {cronogramaPorData.map(({ data, itens }) => (
+            <DayColumn key={data}>
+              <DayHeader>
+                <strong>{formatarData(data)}</strong>
+                <span>{itens.length}</span>
+              </DayHeader>
 
-            return (
-              <DayColumn key={dia.key}>
-                <DayHeader>
-                  <strong>{dia.label}</strong>
-                  <span>{itens.length}</span>
-                </DayHeader>
+              {itens.length === 0 ? (
+                <EmptyState>Livre</EmptyState>
+              ) : (
+                <ScheduleList>
+                  {itens.map((item) => {
+                    const disciplina = encontrarDisciplina(
+                      concurso.disciplinas,
+                      item.disciplinaId,
+                    );
+                    const conteudo = encontrarConteudo(
+                      concurso.disciplinas,
+                      item.conteudoId,
+                    );
 
-                {itens.length === 0 ? (
-                  <EmptyState>Livre</EmptyState>
-                ) : (
-                  <ScheduleList>
-                    {itens.map((item) => {
-                      const disciplina = encontrarDisciplina(
-                        concurso.disciplinas,
-                        item.disciplinaId,
-                      );
-                      const conteudo = encontrarConteudo(
-                        concurso.disciplinas,
-                        item.conteudoId,
-                      );
+                    return (
+                      <ScheduleItem key={item.id} $done={item.concluido}>
+                        <div>
+                          <span>
+                            {item.horario} / {formatarMinutos(item.duracaoMinutos)}
+                          </span>
+                          <strong>{item.titulo}</strong>
+                          <small>
+                            {disciplina?.nome || "Sem disciplina"}
+                            {conteudo ? ` / ${conteudo.titulo}` : ""}
+                          </small>
+                        </div>
 
-                      return (
-                        <ScheduleItem key={item.id} $done={item.concluido}>
-                          <div>
-                            <span>
-                              {item.horario} / {formatarMinutos(item.duracaoMinutos)}
-                            </span>
-                            <strong>{item.titulo}</strong>
-                            <small>
-                              {disciplina?.nome || "Sem disciplina"}
-                              {conteudo ? ` / ${conteudo.titulo}` : ""}
-                            </small>
-                          </div>
-
-                          <ButtonGroup>
-                            <IconButton
-                              type="button"
-                              onClick={() =>
-                                updateCronogramaItem(item.id, {
-                                  concluido: !item.concluido,
-                                })
-                              }
-                            >
-                              {item.concluido ? "Reabrir" : "Feito"}
-                            </IconButton>
-                            <IconButton
-                              type="button"
-                              className="danger"
-                              onClick={() => removeCronogramaItem(item.id)}
-                            >
-                              Excluir
-                            </IconButton>
-                          </ButtonGroup>
-                        </ScheduleItem>
-                      );
-                    })}
-                  </ScheduleList>
-                )}
-              </DayColumn>
-            );
-          })}
+                        <ButtonGroup>
+                          <IconButton
+                            type="button"
+                            onClick={() =>
+                              updateCronogramaItem(item.id, {
+                                concluido: !item.concluido,
+                              })
+                            }
+                          >
+                            {item.concluido ? "Reabrir" : "Feito"}
+                          </IconButton>
+                          <IconButton
+                            type="button"
+                            className="danger"
+                            onClick={() => removeCronogramaItem(item.id)}
+                          >
+                            Excluir
+                          </IconButton>
+                        </ButtonGroup>
+                      </ScheduleItem>
+                    );
+                  })}
+                </ScheduleList>
+              )}
+            </DayColumn>
+          ))}
         </WeekGridContainer>
 
         {cronograma.length === 0 && (

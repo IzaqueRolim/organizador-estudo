@@ -105,6 +105,71 @@ export const criarEstadoInicial = (): AppConcursoState => {
       atualizadoEm: "2026-07-08T18:50:23.076Z",
     },
     {
+      id:"concurso-1783536251757-rf8gds9",
+      titulo:"Concurso BB",
+      orgao:"BB",
+      banca:"FGV",
+      cargo:"TI",
+      nivel:"medio",
+      vagas:500,
+      salario:5000,
+      dataProva:"2027-05-08",
+      dataInscricaoInicio:"2026-10-02",
+      dataInscricaoFim:"2026-11-02",
+      urlEdital:"https://documento.vunesp.com.br/documento/stream/NzEzOTYxNw%3d%3d",
+      observacoes:"",
+      disciplinas:[
+        {
+          id:"disciplina-1783536391157-oo8nns8",
+          nome:"LÍNGUA PORTUGUESA",
+          cor:"#1769aa",
+          peso:3,
+          conteudos:[
+            {
+              id:"conteudo-1783536405555-ygqely3",
+              titulo:"Compreensão de textos",
+              observacao:"",
+              status:"pendente",
+              filhos:[],
+              criadoEm:"2026-07-08T18:46:45.555Z",
+              atualizadoEm:"2026-07-08T18:46:45.555Z"
+            },
+            {
+              id:"conteudo-1783536419247-cyv9cpl",
+              titulo:"Ortografia oficial",
+              observacao:"",
+              status:"pendente",
+              filhos:[],
+              criadoEm:"2026-07-08T18:46:59.247Z",
+              atualizadoEm:"2026-07-08T18:47:06.896Z"
+            },
+            {
+              id:"conteudo-1783536440119-uhi4pox",
+              titulo:"Classe e emprego de palavras.",
+              observacao:"",
+              status:"pendente",
+              filhos:[],
+              criadoEm:"2026-07-08T18:47:20.119Z",
+              atualizadoEm:"2026-07-08T18:47:20.119Z"
+            }
+          ],
+          criadoEm:"2026-07-08T18:46:31.156Z",
+          atualizadoEm:"2026-07-08T18:47:20.119Z"
+        },
+        {
+          id:"disciplina-1783536615950-ismj8wj",
+          nome:"Conhecimentos Bancários",
+          cor:"#1769aa",
+          peso:1,
+          conteudos:[],
+          criadoEm:"2026-07-08T18:50:15.950Z",
+          atualizadoEm:"2026-07-08T18:50:23.076Z"
+        }
+      ],
+      criadoEm:"2026-07-08T18:44:11.757Z",
+      atualizadoEm:"2026-07-08T18:50:23.076Z"
+      },
+      {
       id: "concurso-1783623554351-bb2",
       titulo: "Concurso BB",
       orgao: "BB",

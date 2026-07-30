@@ -303,25 +303,17 @@ export const criarEstadoInicial = (): AppConcursoState => {
           },
           {
             id: "conteudo-1783955495447-nbmc86w",
-            titulo: "Código Penal - artigos 307",
+            titulo: "Código Penal - artigos 307 e 308(falsa identidade)",
             observacao: "",
             status: "pendente",
             filhos: [],
             criadoEm: "2026-07-13T15:11:35.447Z",
             atualizadoEm: "2026-07-13T15:11:35.447Z"
           },
-          {
-            id: "conteudo-1783955495448-p4u4g1x",
-            titulo: "Código Penal - artigos 308",
-            observacao: "",
-            status: "pendente",
-            filhos: [],
-            criadoEm: "2026-07-13T15:11:35.448Z",
-            atualizadoEm: "2026-07-13T15:11:35.448Z"
-          },
+         
           {
             id: "conteudo-1783955495448-1g2np94",
-            titulo: "Código Penal - artigos 311-A",
+            titulo: "Código Penal - artigos 311-A(Fraudes em certames de interesse público)",
             observacao: "",
             status: "pendente",
             filhos: [],
@@ -330,7 +322,7 @@ export const criarEstadoInicial = (): AppConcursoState => {
           },
           {
             id: "conteudo-1783955495448-z0m1cgw",
-            titulo: "Código Penal - artigos 312 a 317",
+            titulo: "Código Penal - artigos 312 a 317(CRIMES PRATICADOS POR FUNCIONÁRIO PÚBLICO CONTRA A ADMINISTRAÇÃO EM GERAL)",
             observacao: "",
             status: "pendente",
             filhos: [],
@@ -339,7 +331,7 @@ export const criarEstadoInicial = (): AppConcursoState => {
           },
           {
             id: "conteudo-1783955495448-nslhlql",
-            titulo: "Código Penal - artigos 319 a 333",
+            titulo: "Código Penal - artigos 319 a 333(Mais CRIMES PRATICADOS POR FUNCIONÁRIO PÚBLICO e PARTICULAR CONTRA A ADMINISTRAÇÃO EM GERAL)",
             observacao: "",
             status: "pendente",
             filhos: [],
@@ -348,7 +340,7 @@ export const criarEstadoInicial = (): AppConcursoState => {
           },
           {
             id: "conteudo-1783955495448-qnojebo",
-            titulo: "Código Penal - artigos 336 e 337",
+            titulo: "Código Penal - artigos 336 e 337(Inutilização de edital ou de sinal e Subtração ou inutilização de livro ou documento)",
             observacao: "",
             status: "pendente",
             filhos: [],
@@ -357,7 +349,7 @@ export const criarEstadoInicial = (): AppConcursoState => {
           },
           {
             id: "conteudo-1783955495448-atlzulq",
-            titulo: "Código Penal - artigos 339 a 347",
+            titulo: "Código Penal - artigos 339 a 347(CRIMES CONTRA A ADMINISTRAÇÃO DA JUSTIÇA)",
             observacao: "",
             status: "pendente",
             filhos: [],
@@ -366,7 +358,7 @@ export const criarEstadoInicial = (): AppConcursoState => {
           },
           {
             id: "conteudo-1783955495448-4rqhq13",
-            titulo: "Código Penal - artigos 357 e 359.",
+            titulo: "Código Penal - artigos 357 e 359(MAIS CRIMES CONTRA A ADMINISTRAÇÃO DA JUSTIÇA)",
             observacao: "",
             status: "pendente",
             filhos: [],

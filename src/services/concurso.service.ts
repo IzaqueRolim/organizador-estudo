@@ -112,7 +112,7 @@ export const criarEstadoInicial = (): AppConcursoState => {
     cargo:"Escrevente Judiciário",
     nivel:"medio",
     vagas:700,
-    salario: 6782,54,
+    salario: 6782,
     dataProva:"2027-03-14",
     dataInscricaoInicio:"2026-10-28",
     dataInscricaoFim:"2026-12-10",

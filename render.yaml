@@ -30,7 +30,7 @@ services:
     name: caderno-concursos
     runtime: static
     rootDir: frontend
-    buildCommand: npm ci && npm run build
+    buildCommand: npm install && npm run build
     staticPublishPath: dist
     routes:
       # o app usa rotas do navegador (/c/:id/edital): qualquer caminho volta ao index.html

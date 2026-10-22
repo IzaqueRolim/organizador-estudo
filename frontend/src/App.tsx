@@ -29,6 +29,7 @@ function Protegido({ children }: { children: React.ReactNode }) {
 function Rotas() {
   useTema(); // aplica o tema salvo (ou o do sistema) já na tela de login
   const { user } = useAuth();
+  
 
   return (
     <Routes>

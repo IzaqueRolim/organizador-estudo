@@ -17,7 +17,7 @@ import { Estudar } from "./pages/Estudar";
 import { Historico } from "./pages/Historico";
 import { DadosConcurso } from "./pages/DadosConcurso";
 import { Backup } from "./pages/Backup";
-
+ 
 function Protegido({ children }: { children: React.ReactNode }) {
   const { user, carregando } = useAuth();
   const local = useLocation();
